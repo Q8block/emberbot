@@ -24,14 +24,35 @@ from webdriver_manager.chrome import ChromeDriverManager
 def average(lst):
     return sum(lst) / len(lst)
 
+def send_email(user, pwd, recipient, subject, body):
+
+
+
+    FROM = user
+    TO = recipient if isinstance(recipient, list) else [recipient]
+    SUBJECT = subject
+    TEXT = body
+
+    # Prepare actual message
+    message = """From: %s\nTo: %s\nSubject: %s\n\n%s
+    """ % (FROM, ", ".join(TO), SUBJECT, TEXT)
+
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.ehlo()
+    server.starttls()
+    server.login(user, pwd)
+    server.sendmail(FROM, TO, message)
+    server.close()
+    print('successfully sent the mail')
+
 options = Options()
-options.add_argument('--user-data-dir=C:/Users/Ahmad/AppData/Local/Google/Chrome/User Data/Profile 1')
+options.add_argument('--user-data-dir=C:/Users/Ahmad/AppData/Local/Google/Chrome/User Data/Profile 4')
 options.add_argument("--profile-directory=Default")
 driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 base = "https://opensea.io"
 
-min_price = 0.155
-max_price = 0.21
+min_price = 0.145
+max_price = 0.17
 min_Y = 0
 max_Y = 2
 min_X = 0
@@ -40,8 +61,11 @@ x = 0
 lands_successfully_offered = 0
 total_lands = 0
 all_time_stamps = []
-input('click anything to start!')
 
+# send_email("enchantiom20@gmail.com", "ddd123fff", "ahmadowaihansales@gmail.com", "voxbot update",
+#            f"its working!")
+
+input('click anything to start!')
 
 
 while True:
@@ -136,8 +160,9 @@ while True:
                 y=""
             #sign metamask
             attempts = 0
-            while True:
+            while attempts < 5:
                 time.sleep(2.5)
+                print(attempts)
                 try:
                     attempts += 1
                     main_page = driver.current_window_handle
@@ -146,9 +171,9 @@ while True:
                         if handle != main_page:
                             login_page = handle
                     driver.switch_to.window(login_page)
-                    if attempts >= 3:
+                    if attempts == 4:
                         driver.close()
-                        print("unsuccessful, skipping this land")
+                        print("unsuccessful, there might be a fee, closing metamask")
                         time.sleep(2)
                         driver.implicitly_wait(10)
                         driver.switch_to.window(main_page)
@@ -165,7 +190,7 @@ while True:
 
                     break
                 except:
-                    print("metamask loaded slowly, retrying...")
+                    print("something went wrong with signing metamask, retrying...")
 
             ending_time = time.perf_counter()
             time_stamp = ending_time - starting_time
@@ -177,7 +202,7 @@ while True:
 
         except:
             print("something went wrong, going to next loop ")
-            time.sleep(10)
+            time.sleep(15)
     try:
         if min_X >= 199:
             min_Y = min_Y + 3
