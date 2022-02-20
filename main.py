@@ -51,10 +51,10 @@ options.add_argument("--profile-directory=Default")
 driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 base = "https://opensea.io"
 
-min_price = 0.145
+min_price = 0.15
 max_price = 0.17
-min_Y = 0
-max_Y = 2
+min_Y = 100
+max_Y = 102
 min_X = 0
 max_X = 1
 x = 0
