@@ -235,4 +235,5 @@ seconds = round(sum(all_time_stamps), 2)
 print(f"summery:")
 print(f"time taken: {str(seconds)}")
 print("average offer time: " + str(round(average(all_time_stamps), 2)))
-
+send_email("enchantiom20@gmail.com", "ddd123fff", "ahmadowaihansales@gmail.com", "emberbot update",
+           f"{str((index-starting_land_index)+1)}/{ending_land_index-starting_land_index}  complete!")
