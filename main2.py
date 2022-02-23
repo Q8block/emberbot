@@ -108,119 +108,133 @@ input('click anything to start!')
 # for idx, val in enumerate(ints):
 for index, item in enumerate(list_of_lands, start=1):
         if index < starting_land_index:
-            print(f"skipping {index}  item id: {item['id']}")
+            print(f"skipping {index}")
+            continue
+        if 'EmberSword_OfficialWa' in item['Owner']:
+            print("we do not offer to EmberSword_OfficialWallet, skipping...")
             continue
         if index >= ending_land_index:
             print("job done!")
             sys.exit()
         starting_time = time.perf_counter()
+        # get offer value
         try:
-            # get offer value
             driver.get(item['URL'])
-            time.sleep(1.5)
+        except:
+            print("couldn't get url")
+        time.sleep(1.5)
 
-            driver.implicitly_wait(3)
+        driver.implicitly_wait(3)
 
-            #detect price
-            try:
-                price = driver.find_element_by_class_name('Price--amount')
-                float_price = float(price.text)
+        #detect price
+        try:
+            price = driver.find_element_by_class_name('Price--amount')
+            float_price = float(price.text)
 
-                if min_price <= float_price < max_price:
-                    the_offer = float_price + 0.001
-                elif float_price < min_price:
-                    the_offer = min_price
-                elif float_price >= max_price:
-                    the_offer = min_price
-            except:
-                print("couldnt find price")
-            print(f"{str((index-starting_land_index)+1)}/{ending_land_index-starting_land_index}")
-            if float_price > max_price:
-                print(f"I think there is no offer, let's make a {min_price} bid")
-            else:
-                print(f"detected highest offer price: {float_price}, offering {the_offer}")
-            # click the make offer button
+            if min_price <= float_price < max_price:
+                the_offer = float_price + 0.001
+            elif float_price < min_price:
+                the_offer = min_price
+            elif float_price >= max_price:
+                the_offer = min_price
+        except:
+            print("couldnt find price")
+        if float_price > max_price:
+            print(f"I think there is no offer, let's make a {min_price} bid")
+        else:
+            print(f"detected highest offer price: {float_price}, offering {the_offer}")
+        # click the make offer button
+        try:
             makeoffer = driver.find_element_by_xpath("//*[contains(text(), 'Make offer')]")
             time.sleep(1.5)
             Hover = ActionChains(driver).move_to_element(makeoffer).move_to_element(makeoffer)
             Hover.click().perform()
-            driver.implicitly_wait(2)
+        except:
+            print("couldnt click the 'make offer' button")
+        driver.implicitly_wait(2)
 
+        try:
             driver.find_element_by_xpath("//input[@placeholder='Amount']").send_keys(str(round(the_offer, 3)))
-            try:
-                driver.find_element_by_id("tos").click()
-            except:
-                y = ""
+        except:
+            print("couldnt input offer in textbox")
+        try:
+            driver.find_element_by_id("tos").click()
+        except:
+            y = ""
 
-            # fill the form
-            # modal = driver.find_element_by_class_name('Modalreact__Dialog-sc-xyql9f-0')
-            # custom_date_select = modal.find_element_by_xpath("//input[@value='7 days']")
-            # custom_date_select.click()
-            #
-            # buttons = modal.find_elements_by_css_selector('li > button')
-            # buttons[-1].click()
-            #
-            # number_of_hours = expiration_in_hours
-            #
-            # expiry_time = datetime.now() + timedelta(hours=number_of_hours)
-            # expiry_time = expiry_time.strftime("%m%d%I%M%p")
-            #
-            # time.sleep(1.5)
-            # # make sure you open the browser and don't touch your keyboard when this code is running
-            # dateimepicker = modal.find_element_by_class_name('Buttonreact__StyledButton-sc-glfma3-0')
-            # dateimepicker.click()
-            # pyautogui.write(expiry_time)
-            # pyautogui.write('\n')
-            #
-            # submit the form
-            driver.implicitly_wait(2)
+        # fill the form
+        # modal = driver.find_element_by_class_name('Modalreact__Dialog-sc-xyql9f-0')
+        # custom_date_select = modal.find_element_by_xpath("//input[@value='7 days']")
+        # custom_date_select.click()
+        #
+        # buttons = modal.find_elements_by_css_selector('li > button')
+        # buttons[-1].click()
+        #
+        # number_of_hours = expiration_in_hours
+        #
+        # expiry_time = datetime.now() + timedelta(hours=number_of_hours)
+        # expiry_time = expiry_time.strftime("%m%d%I%M%p")
+        #
+        # time.sleep(1.5)
+        # # make sure you open the browser and don't touch your keyboard when this code is running
+        # dateimepicker = modal.find_element_by_class_name('Buttonreact__StyledButton-sc-glfma3-0')
+        # dateimepicker.click()
+        # pyautogui.write(expiry_time)
+        # pyautogui.write('\n')
+        #
+        # submit the form
+        driver.implicitly_wait(2)
+        try:
             driver.find_element_by_xpath("//*[contains(text(), 'Make Offer')]").click()
-            driver.implicitly_wait(2)
-            time.sleep(1.5)
+        except:
+            print("couldnt submit the form.")
+        driver.implicitly_wait(2)
+        time.sleep(1.5)
 
-            #sign form
+        #sign form
+        try:
+            driver.find_element_by_xpath(
+                "/html/body/div[11]/div/div/div/section/div/div/section/div/div/div/div/div/div/div/button").click()
+        except:
+            y = ""
+        try:
+            driver.find_element_by_xpath(
+                "/html/body/div[13]/div/div/div/section/div/div/section/div/div/div/div/div/div/div/button").click()
+        except:
+            y=""
+
+        #sign metamask
+        attempts = 0
+        while attempts < 5:
+            time.sleep(1)
             try:
-                driver.find_element_by_xpath(
-                    "/html/body/div[11]/div/div/div/section/div/div/section/div/div/div/div/div/div/div/button").click()
-            except:
-                y = ""
-            try:
-                driver.find_element_by_xpath(
-                    "/html/body/div[13]/div/div/div/section/div/div/section/div/div/div/div/div/div/div/button").click()
-            except:
-                y=""
-
-            #sign metamask
-            attempts = 0
-            while attempts < 5:
-                time.sleep(2.5)
-                try:
-                    attempts += 1
-                    main_page = driver.current_window_handle
-                    login_page = any
-                    for handle in driver.window_handles:
-                        if handle != main_page:
-                            login_page = handle
-                    driver.switch_to.window(login_page)
-                    if attempts == 4:
-                        driver.close()
-                        print("unsuccessful, there might be a fee, closing metamask")
-                        time.sleep(2)
-                        driver.implicitly_wait(10)
-                        driver.switch_to.window(main_page)
-                        time.sleep(2)
-                        break
-                    else:
-                        driver.find_element_by_xpath("//button[@data-testid='request-signature__sign']").click()
-                        time.sleep(2)
-                        driver.implicitly_wait(10)
-                        driver.switch_to.window(main_page)
-                        time.sleep(2)
-
+                attempts += 1
+                main_page = driver.current_window_handle
+                login_page = any
+                for handle in driver.window_handles:
+                    if handle != main_page:
+                        login_page = handle
+                driver.switch_to.window(login_page)
+                if attempts == 4:
+                    driver.close()
+                    print("unsuccessful, there might be a fee, closing metamask")
+                    time.sleep(2)
+                    driver.implicitly_wait(10)
+                    driver.switch_to.window(main_page)
+                    time.sleep(2)
                     break
-                except:
-                    print("something went wrong with signing metamask, retrying...")
+                else:
+                    driver.find_element_by_xpath("//button[@data-testid='request-signature__sign']").click()
+                    time.sleep(2)
+                    driver.implicitly_wait(10)
+                    driver.switch_to.window(main_page)
+                    time.sleep(2)
 
+                break
+            except:
+                print("something went wrong with signing metamask, retrying...")
+                time.sleep(2)
+        try:
             ending_time = time.perf_counter()
             time_stamp = ending_time - starting_time
             all_time_stamps.append(time_stamp)
@@ -229,8 +243,8 @@ for index, item in enumerate(list_of_lands, start=1):
             print(f"{str((index-starting_land_index)+1)}/{ending_land_index-starting_land_index}")
             print("--------------------")
         except:
-            print("something went wrong, going to next loop ")
-            time.sleep(10)
+            print("offer summery fualt")
+
 seconds = round(sum(all_time_stamps), 2)
 print(f"summery:")
 print(f"time taken: {str(seconds)}")
