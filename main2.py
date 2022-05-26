@@ -122,6 +122,7 @@ for index, item in enumerate(list_of_lands, start=1):
             driver.get(item['URL'])
         except:
             print("couldn't get url")
+            continue
         time.sleep(1.5)
 
         driver.implicitly_wait(3)
